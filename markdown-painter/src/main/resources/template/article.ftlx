@@ -1,0 +1,48 @@
+<#noautoesc>
+import React, {Component} from "react"
+import Title from '../component/title'
+import Paragraph from '../component/paragraph'
+
+
+const title = "${doc.title}"
+
+const codeStyle = {
+    fontFamily: 'Consolas, "Liberation Mono", Menlo, Courier, monospace',
+    fontSize: '.85em',
+    padding: '.8em',
+    overflow: 'auto',
+    borderRadius: '3px',
+    background: '#f5f5f5'
+}
+
+class Content extends Component {
+
+    render () {
+
+        return [
+            <Title key="0" title="${doc.title}" />,
+
+            <#if doc.paragraphs??>
+                <#list doc.paragraphs as paragraph>
+                    <Paragraph key="${paragraph_index + 1}" header="${paragraph.header}" ps={
+                        <#if paragraph.blocks??>
+                        [
+                            <#list paragraph.blocks as block>
+                                ${painter.paintBlock(block_index, block)},
+                            </#list>
+                        ]
+                        </#if>
+                    }/>,
+                </#list>
+            </#if>
+        ]
+    }
+}
+
+const article = {
+    title: title,
+    content: Content
+}
+
+export { article }
+</#noautoesc>
