@@ -2,14 +2,16 @@ package com.songfeifan.util;
 
 import static org.junit.Assert.assertTrue;
 
-import com.songfeifan.util.markdown.blog.BlogAnalysis;
-import com.songfeifan.util.markdown.blog.BlogPainter;
-import com.songfeifan.util.markdown.parser.*;
+import com.songfeifan.markdown.blog.BlogAnalysis;
+import com.songfeifan.markdown.blog.BlogPainter;
+import com.songfeifan.markdown.parser.*;
+import net.sourceforge.plantuml.Option;
+import net.sourceforge.plantuml.Run;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.WriterOutputStream;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -46,5 +48,14 @@ public class AppTest {
         BlockTree blockTree = new Parser().parse(md);
         String s = new BlogPainter().paint(new BlogAnalysis().analysis(blockTree));
         System.out.println(s);
+    }
+
+    @Test
+    public void testUml() throws IOException, InterruptedException {
+        Option option = new Option("-tsvg", "-p");
+        StringReader in = new StringReader("");
+        StringWriter out = new StringWriter();
+        Run.managePipe(option, new BufferedReader(in), new PrintStream(new WriterOutputStream(out, StandardCharsets.UTF_8)));
+        System.out.println(out.toString());
     }
 }

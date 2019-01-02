@@ -2,16 +2,14 @@ package com.songfeifan.util;
 
 import static org.junit.Assert.assertTrue;
 
-import com.songfeifan.util.markdown.parser.*;
-import com.songfeifan.util.markdown.util.StringUtil;
+import com.songfeifan.markdown.parser.*;
+import com.songfeifan.markdown.util.StringUtil;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Arrays;
