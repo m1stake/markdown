@@ -2,11 +2,19 @@ package com.songfeifan.markdown.blog;
 
 import com.songfeifan.markdown.analysis.Analyzer;
 import com.songfeifan.markdown.blog.exception.DocumentFormatException;
+import com.songfeifan.markdown.component.CodeBlock;
 import com.songfeifan.markdown.component.Component;
 import com.songfeifan.markdown.component.Header;
 import com.songfeifan.markdown.component.StringBlock;
 import com.songfeifan.markdown.parser.BlockTree;
 import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BlogAnalysis implements Analyzer<BlogDocument> {
 
@@ -14,10 +22,56 @@ public class BlogAnalysis implements Analyzer<BlogDocument> {
     public BlogDocument analysis(BlockTree blockTree) {
         BlogDocument document = new BlogDocument();
 
+        blockTree = documentMeta(document, blockTree);
         title(document, blockTree);
         paragraphs(document, blockTree.getNext());
 
         return document;
+    }
+
+    private BlockTree documentMeta(BlogDocument document, BlockTree blockTree) {
+        BlockTree head = blockTree;
+        List<Map<String, Object>> metaList = new ArrayList<>();
+        Component component;
+        while ((component = blockTree.getComponent()) != null) {
+            if (component instanceof CodeBlock) {
+                CodeBlock codeBlock = (CodeBlock) component;
+                if ("meta".equals(codeBlock.getLanguage())) {
+                    metaList.add(parseMeta(codeBlock.getCode()));
+                    // 移除元数据节点
+                    BlockTree prev = blockTree.getPrev();
+                    if (prev != null) {
+                        prev.setNext(blockTree.getNext());
+                    } else {
+                        head = blockTree.getNext();
+                    }
+                }
+            }
+            blockTree = blockTree.getNext();
+        }
+        document.setDocumentMeta(mergeMeta(metaList));
+        return head;
+    }
+
+    private Map<String, Object> mergeMeta(List<Map<String, Object>> metaList) {
+        Map<String, Object> meta = new HashMap<>();
+        for (Map<String, Object> m: metaList) {
+            meta.putAll(m);
+        }
+        return meta;
+    }
+
+    private Map<String, Object> parseMeta(String code) {
+        Map<String, Object> meta = new HashMap<>();
+        Pattern pattern = Pattern.compile("\\s*([^:]+)\\s*:\\s*(.+)\\s*");
+        String[] lines = code.split("\r|\n|\r\n");
+        for (String line: lines) {
+            Matcher matcher = pattern.matcher(line);
+            if (matcher.find()) {
+                meta.put(matcher.group(1), matcher.group(2));
+            }
+        }
+        return meta;
     }
 
     private void title(BlogDocument document, BlockTree blockTree) {

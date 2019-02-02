@@ -1,12 +1,10 @@
 package com.songfeifan.markdown.blog;
 
 import com.songfeifan.markdown.component.CodeBlock;
+import com.songfeifan.markdown.component.Header;
 import com.songfeifan.markdown.component.StringBlock;
 import com.songfeifan.markdown.freemarker.ConfigurationFactory;
-import com.songfeifan.markdown.painter.CodePainter;
 import com.songfeifan.markdown.painter.Painter;
-import com.songfeifan.markdown.painter.PumlCodePainter;
-import com.songfeifan.markdown.painter.StringPainter;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -49,11 +47,16 @@ public class BlogPainter implements Painter<BlogDocument> {
         return out.toString();
     }
 
+    public String paintBlock(int index, Header headerBlock) {
+        int level = headerBlock.getLevel();
+        return String.format("<h%d key='%d'>%s</h%d>", level, index, headerBlock.getContent(), level);
+    }
+
     public String paintBlock(int index, StringBlock stringBlock) {
-        return stringPainter.paint(index, stringBlock);
+        return stringPainter.paint(index, stringBlock, new BlogDocument());
     }
 
     public String paintBlock(int index, CodeBlock codeBlock) {
-        return codePainter.paint(index, codeBlock);
+        return codePainter.paint(index, codeBlock, new BlogDocument());
     }
 }

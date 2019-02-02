@@ -1,5 +1,7 @@
 package com.songfeifan.markdown.freemarker;
 
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.core.PlainTextOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
@@ -17,13 +19,8 @@ public abstract class ConfigurationFactory {
     public static Configuration get() {
         if (cfg == null) {
             cfg = new Configuration(Configuration.VERSION_2_3_28);
-
-            URL url = ConfigurationFactory.class.getClassLoader().getResource("template");
-            try {
-                cfg.setDirectoryForTemplateLoading(new File(Objects.requireNonNull(url).toURI()));
-            } catch (IOException | URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
+            TemplateLoader ctl = new ClassTemplateLoader(ConfigurationFactory.class, "/template");
+            cfg.setTemplateLoader(ctl);
             cfg.setOutputFormat(PlainTextOutputFormat.INSTANCE);
             cfg.setDefaultEncoding("UTF-8");
             cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);

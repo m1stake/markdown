@@ -3,6 +3,7 @@ package com.songfeifan.util;
 import static org.junit.Assert.assertTrue;
 
 import com.songfeifan.markdown.blog.BlogAnalysis;
+import com.songfeifan.markdown.blog.BlogDocument;
 import com.songfeifan.markdown.blog.BlogPainter;
 import com.songfeifan.markdown.parser.*;
 import net.sourceforge.plantuml.Option;
@@ -22,14 +23,6 @@ import java.util.Objects;
  * Unit test for simple App.
  */
 public class AppTest {
-    /**
-     * Rigorous Test :-)
-     */
-    @Test
-    public void shouldAnswerWithTrue() {
-        Class a = null;
-        // assertTrue( a instanceof Class );
-    }
 
     @Test
     public void test() throws IOException, URISyntaxException {
@@ -42,11 +35,12 @@ public class AppTest {
                 new HTMLVisitor(),
                 new StringVisitor() ));
         File mdFile = Paths.get(
-                Objects.requireNonNull(AppTest.class.getClassLoader().getResource("a.md")).toURI()).toFile();
+                Objects.requireNonNull(AppTest.class.getClassLoader().getResource("encryption_communication.md")).toURI()).toFile();
         byte[] bs = FileUtils.readFileToByteArray(mdFile);
         String md = new String(bs, StandardCharsets.UTF_8);
         BlockTree blockTree = new Parser().parse(md);
-        String s = new BlogPainter().paint(new BlogAnalysis().analysis(blockTree));
+        BlogDocument document = new BlogAnalysis().analysis(blockTree);
+        String s = new BlogPainter().paint(document);
         System.out.println(s);
     }
 

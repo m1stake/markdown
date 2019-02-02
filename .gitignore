@@ -1,3 +1,7 @@
 .idea
 **/svg
 **/target
+*.iml
+venv/
+/article/
+/db.js

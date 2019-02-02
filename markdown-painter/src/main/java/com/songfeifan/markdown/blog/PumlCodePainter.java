@@ -1,6 +1,8 @@
-package com.songfeifan.markdown.painter;
+package com.songfeifan.markdown.blog;
 
 import com.songfeifan.markdown.component.CodeBlock;
+import com.songfeifan.markdown.painter.CodeExtensionPainter;
+import com.songfeifan.markdown.painter.Document;
 import com.songfeifan.markdown.util.PumlUtil;
 import org.apache.commons.io.FileUtils;
 
@@ -14,7 +16,7 @@ public class PumlCodePainter implements CodeExtensionPainter {
     private static final String SVG_DIR = "svg";
 
     @Override
-    public String paint(int index, CodeBlock component) {
+    public String paint(int index, CodeBlock component, Document document) {
         String svgCode = PumlUtil.convertToSvg(component.getCode());
         String fileName = UUID.randomUUID().toString().replaceAll("-", "").concat(".svg");
         try {

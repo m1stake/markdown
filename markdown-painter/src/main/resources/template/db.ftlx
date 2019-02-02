@@ -1,0 +1,14 @@
+<#noautoesc>
+<#list articles as article>
+    import { article as ${article.fileName} } from '../article/${article.fileName}'
+</#list>
+
+const articles = [
+    <#list articles as article>
+        ${article.fileName},
+    </#list>
+].reverse();
+
+export default articles
+
+</#noautoesc>
