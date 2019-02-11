@@ -21,14 +21,15 @@ public class BlogAnalysis implements Analyzer<BlogDocument> {
     public BlogDocument analysis(BlockTree blockTree) {
         BlogDocument document = new BlogDocument();
 
-        documentMeta(document, blockTree);
+        blockTree = documentMeta(document, blockTree);
         title(document, blockTree);
         paragraphs(document, blockTree.getNext());
 
         return document;
     }
 
-    private void documentMeta(BlogDocument document, BlockTree blockTree) {
+    private BlockTree documentMeta(BlogDocument document, BlockTree blockTree) {
+        BlockTree head = blockTree;
         List<Map<String, Object>> metaList = new ArrayList<>();
         Component component;
         while ((component = blockTree.getComponent()) != null) {
@@ -36,11 +37,19 @@ public class BlogAnalysis implements Analyzer<BlogDocument> {
                 CodeBlock codeBlock = (CodeBlock) component;
                 if ("meta".equals(codeBlock.getLanguage())) {
                     metaList.add(parseMeta(codeBlock.getCode()));
+                    // 移除元数据节点
+                    BlockTree prev = blockTree.getPrev();
+                    if (prev != null) {
+                        prev.setNext(blockTree.getNext());
+                    } else {
+                        head = blockTree.getNext();
+                    }
                 }
             }
             blockTree = blockTree.getNext();
         }
         document.setDocumentMeta(mergeMeta(metaList));
+        return head;
     }
 
     private Map<String, Object> mergeMeta(List<Map<String, Object>> metaList) {
